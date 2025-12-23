@@ -1,54 +1,110 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Lighting style prompts for image generation
+// Lighting style prompts for image generation - each style is EXCLUSIVE
 const lightingStylePrompts: Record<string, string> = {
-  architectural: `Edit this home exterior photo to add professional architectural uplighting.
-    Add warm amber LED uplights (2700K-3000K color temperature) at the base of the home.
-    The lights should cast upward beams that highlight the facade, columns, and architectural features.
-    Add realistic warm glows, light pools, and subtle shadows.
-    Make it look like a professional nighttime landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+  architectural: `Transform this home exterior to nighttime with ONLY architectural uplighting on the building structure.
 
-  pathway: `Edit this home exterior photo to add professional path and walkway lighting.
-    Add low-voltage LED path lights along walkways, driveways, and garden borders.
-    Space the warm amber fixtures (2700K-3000K) evenly, creating pools of light.
-    Add realistic glows around each path light fixture.
-    Make it look like a professional nighttime landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+STYLE FOCUS - ARCHITECTURAL UPLIGHTING ONLY:
+- Add 3-5 brass/bronze LED uplights (2700K warm amber) positioned at the base of the home facade
+- Angle lights upward at 15-30 degrees to wash the walls with warm light
+- Highlight columns, stone/brick textures, window frames, and rooflines
+- Create dramatic upward light beams on the building facade
+- Add subtle warm glow halos around each fixture
 
-  garden: `Edit this home exterior photo to add professional garden and plant highlighting.
-    Add accent uplights at the base of trees to create dramatic silhouettes.
-    Add spotlights to showcase plants and landscaping features.
-    Use warm amber LED lights (2700K-3000K) with realistic glow effects.
-    Make it look like a professional nighttime landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+CRITICAL - DO NOT ADD:
+- NO pathway lights or walkway fixtures
+- NO tree or garden lighting
+- NO string lights or patio lights
+- NO floodlights or security lights
+- ONLY illuminate the building itself
 
-  outdoor_living: `Edit this home exterior photo to add professional outdoor living space lighting.
-    Add ambient lighting for patios, decks, and entertaining areas.
-    Include subtle string lights, recessed lights, and wall-mounted fixtures.
-    Use warm white LED lights (2700K-3000K) to create a cozy atmosphere.
-    Make it look like a professional nighttime landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+The sky should be deep twilight blue. Add realistic shadows and light falloff. Keep the home structure exactly the same.`,
 
-  security: `Edit this home exterior photo to add professional security lighting.
-    Add well-placed LED floodlights at key entry points.
-    Add continuous low-level perimeter lighting for visibility.
-    Mix warm accent lights with brighter security fixtures.
-    Make it look like a professional nighttime landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+  pathway: `Transform this home exterior to nighttime with ONLY pathway and walkway lighting.
 
-  combination: `Edit this home exterior photo to add a comprehensive professional landscape lighting design.
-    Include ALL of the following:
-    1. Architectural uplighting on the home's facade with warm amber LEDs
-    2. Path lights along walkways and driveways
-    3. Garden accent lights highlighting trees and landscaping
-    4. Ambient lighting for outdoor living spaces
-    5. Subtle security lighting at entry points
-    Use warm color temperatures (2700K-3000K) throughout.
-    Add realistic glows, light beams, and subtle shadows.
-    Make it look like a premium professional landscape lighting photo.
-    The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
+STYLE FOCUS - PATH LIGHTING ONLY:
+- Add 6-10 low-voltage brass path lights along visible walkways, driveways, and garden borders
+- Space fixtures 6-8 feet apart in a consistent pattern
+- Each path light should cast a warm amber pool of light (2700K) on the ground
+- Use mushroom-cap or hat-style path light fixtures
+- Create overlapping pools of light along the walking path
+
+CRITICAL - DO NOT ADD:
+- NO uplighting on the house facade
+- NO tree spotlights or garden accent lights
+- NO string lights or patio lighting
+- NO floodlights or security lighting
+- ONLY illuminate walkways and paths
+
+The sky should be deep twilight blue. The home should remain mostly in shadow except where path light spills naturally. Keep the home structure exactly the same.`,
+
+  garden: `Transform this home exterior to nighttime with ONLY garden and landscape accent lighting.
+
+STYLE FOCUS - GARDEN/TREE LIGHTING ONLY:
+- Add dramatic uplights at the base of trees to silhouette branches against the night sky
+- Position 2-3 spotlights to highlight specimen plants, shrubs, or garden features
+- Use warm amber LEDs (2700K-3000K) with visible light beams through foliage
+- Create moonlighting effects through tree canopies where applicable
+- Add subtle ground-level accent lights near flower beds or landscape features
+
+CRITICAL - DO NOT ADD:
+- NO uplighting on the house facade or walls
+- NO pathway lights along walkways
+- NO string lights or patio fixtures
+- NO floodlights or security lighting
+- ONLY illuminate trees, plants, and landscaping
+
+The sky should be deep twilight blue. The home should remain in shadow - focus lighting on landscape elements only. Keep the home structure exactly the same.`,
+
+  outdoor_living: `Transform this home exterior to nighttime with ONLY outdoor living space ambient lighting.
+
+STYLE FOCUS - PATIO/DECK AMBIENT LIGHTING ONLY:
+- Add warm string lights or bistro lights over patio/deck areas if visible
+- Include subtle recessed soffit lights under eaves or overhangs
+- Add wall-mounted sconces near doors or seating areas
+- Create a cozy, intimate ambiance with warm white light (2700K)
+- Focus on entertaining spaces - patios, decks, porches, pergolas
+
+CRITICAL - DO NOT ADD:
+- NO dramatic uplighting on the house facade
+- NO pathway lights along walkways
+- NO tree spotlights or garden accent lights
+- NO bright floodlights or security lighting
+- ONLY illuminate outdoor living/entertaining spaces
+
+The sky should be deep twilight blue. Create an inviting atmosphere for the living spaces. Keep the home structure exactly the same.`,
+
+  security: `Transform this home exterior to nighttime with ONLY security and safety lighting.
+
+STYLE FOCUS - SECURITY LIGHTING ONLY:
+- Add 2-3 motion-sensor style LED floodlights at entry points (garage, front door, side gates)
+- Include eave-mounted downlights for perimeter visibility
+- Use brighter, whiter light (3000-4000K) typical of security fixtures
+- Ensure even coverage at vulnerable entry points
+- Add subtle dusk-to-dawn fixtures near doors
+
+CRITICAL - DO NOT ADD:
+- NO decorative uplighting on the facade
+- NO pathway lights or walkway fixtures
+- NO garden accent lights or tree spotlights
+- NO string lights or ambient patio lighting
+- ONLY functional security/safety illumination
+
+The sky should be deep twilight blue. Focus on practical visibility and entry point illumination. Keep the home structure exactly the same.`,
+
+  combination: `Transform this home exterior to nighttime with a COMPLETE professional landscape lighting design.
+
+INCLUDE ALL FIVE LIGHTING TYPES:
+1. ARCHITECTURAL: Warm amber uplights (2700K) washing the home facade, highlighting columns and textures
+2. PATHWAY: Brass path lights every 6-8 feet along all visible walkways and driveways
+3. GARDEN: Dramatic tree uplights and accent spots on landscape features
+4. OUTDOOR LIVING: String lights or ambient fixtures over patios/decks, wall sconces near doors
+5. SECURITY: Subtle eave-mounted downlights at entry points for safety
+
+Create a cohesive, layered lighting design that balances all elements. Use warm color temperatures (2700K-3000K) for decorative elements. Add realistic glows, light beams, and natural shadow interplay.
+
+The sky should be deep twilight blue. This should look like a premium, professionally-designed lighting installation. Keep the home structure exactly the same.`,
 };
 
 // Primary: Gemini 3 Pro Image (Nano Banana Pro)
