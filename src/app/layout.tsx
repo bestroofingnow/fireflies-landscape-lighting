@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header, Footer } from "@/components/layout";
 import { FireflyCursor } from "@/components/FireflyCursor";
+import { FloatingContactButton } from "@/components/ui/FloatingContactButton";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -84,6 +85,7 @@ export default function RootLayout({
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
+        <FloatingContactButton />
       </body>
     </html>
   );

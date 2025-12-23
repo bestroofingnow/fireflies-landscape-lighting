@@ -5,6 +5,7 @@ import { Award, Shield, Users, Heart, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
 import { CTA } from "@/components/sections";
+import { ProcessSection } from "./ProcessSection";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -207,8 +208,11 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* How We Work - Process Timeline */}
+      <ProcessSection />
+
       {/* Contact Info */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-card">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-foreground mb-6">

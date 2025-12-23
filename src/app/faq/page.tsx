@@ -5,6 +5,7 @@ import { Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
 import { CTA } from "@/components/sections";
+import { FAQSection } from "./FAQSection";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -180,28 +181,7 @@ export default function FAQPage() {
       {/* FAQ Sections */}
       <section className="py-20 bg-card">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl mx-auto space-y-12">
-            {faqs.map((category) => (
-              <div key={category.category}>
-                <h2 className="text-2xl font-bold text-foreground mb-6">
-                  {category.category}
-                </h2>
-                <div className="space-y-4">
-                  {category.questions.map((faq, index) => (
-                    <div
-                      key={index}
-                      className="rounded-xl bg-background p-6 border border-border"
-                    >
-                      <h3 className="text-lg font-semibold text-foreground mb-3">
-                        {faq.q}
-                      </h3>
-                      <p className="text-muted-foreground">{faq.a}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <FAQSection faqs={faqs} />
         </div>
       </section>
 

@@ -1,9 +1,11 @@
 import {
   Hero,
+  Stats,
   ValueProps,
   Services,
   VisualizerPromo,
   Gallery,
+  BeforeAfterShowcase,
   ServiceAreas,
   Testimonials,
   CTA,
@@ -92,10 +94,12 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
+      <Stats />
       <ValueProps />
       <Services />
       <VisualizerPromo />
       <Gallery />
+      <BeforeAfterShowcase />
       <ServiceAreas />
       <Testimonials />
       <CTA />

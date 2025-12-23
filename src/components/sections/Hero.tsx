@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Star, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
-import { FloatingOrbs, AmbientOrb, LightBeam } from "@/components/animations";
+import { FloatingOrbs, AmbientOrb, LightBeam, MouseSpotlight } from "@/components/animations";
 
 export function Hero() {
   return (
@@ -61,6 +61,9 @@ export function Hero() {
           className="left-[30%]"
         />
       </div>
+
+      {/* Mouse-following spotlight effect */}
+      <MouseSpotlight size={500} color="rgba(255, 215, 0, 0.06)" />
 
       <div className="container relative mx-auto px-4 py-20 lg:px-8 lg:py-32">
         <div className="grid items-center gap-12 lg:grid-cols-2">
