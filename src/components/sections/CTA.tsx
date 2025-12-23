@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,19 @@ export function CTA({
 }: CTAProps) {
   return (
     <section className="relative py-20 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <Image
+          src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/12/image-30.png"
+          alt="Landscape lighting background"
+          fill
+          className="object-cover"
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-background/80" />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
+      </div>
 
       {/* Animated fireflies */}
       <div className="absolute inset-0 overflow-hidden">

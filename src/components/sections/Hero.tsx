@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Star, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -117,41 +118,23 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Right content - Hero image placeholder */}
+          {/* Right content - Hero image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="relative"
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-card">
-              {/* Placeholder for hero image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-card via-muted to-card">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-primary/20 flex items-center justify-center">
-                      <motion.div
-                        animate={{
-                          scale: [1, 1.2, 1],
-                          opacity: [0.5, 1, 0.5],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                        className="h-12 w-12 rounded-full bg-primary/50"
-                        style={{
-                          boxShadow: "0 0 40px rgba(255, 215, 0, 0.5)",
-                        }}
-                      />
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Add your stunning landscape lighting photo here
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+              <Image
+                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/m6cxxzu262nnl7wdnkdz.webp"
+                alt="Professional landscape lighting on a beautiful home at night"
+                fill
+                className="object-cover"
+                priority
+              />
+              {/* Overlay gradient for depth */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
 
               {/* Decorative glow */}
               <div
