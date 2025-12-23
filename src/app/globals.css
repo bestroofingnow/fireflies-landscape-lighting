@@ -1,0 +1,215 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Fireflies Brand Colors */
+  --color-firefly-50: #fffbeb;
+  --color-firefly-100: #fef3c7;
+  --color-firefly-200: #fde68a;
+  --color-firefly-300: #fcd34d;
+  --color-firefly-400: #fbbf24;
+  --color-firefly-500: #f59e0b;
+  --color-firefly-600: #d97706;
+  --color-firefly-700: #b45309;
+  --color-firefly-glow: #FFD700;
+  --color-firefly-glow-orange: #FFA500;
+}
+
+/* Fireflies Dark Theme - Primary theme for the site */
+:root {
+  --radius: 0.5rem;
+  /* Dark backgrounds */
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  /* Cards & Popovers */
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
+  /* Primary - Firefly Gold/Amber */
+  --primary: #f59e0b;
+  --primary-foreground: #0f172a;
+  /* Secondary */
+  --secondary: #334155;
+  --secondary-foreground: #f8fafc;
+  /* Muted */
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  /* Accent */
+  --accent: #fbbf24;
+  --accent-foreground: #0f172a;
+  /* Destructive */
+  --destructive: #ef4444;
+  /* Borders & Inputs */
+  --border: #334155;
+  --input: #334155;
+  --ring: #f59e0b;
+  /* Chart colors */
+  --chart-1: #f59e0b;
+  --chart-2: #22c55e;
+  --chart-3: #3b82f6;
+  --chart-4: #a855f7;
+  --chart-5: #ec4899;
+  /* Sidebar */
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #f59e0b;
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #334155;
+  --sidebar-ring: #f59e0b;
+}
+
+/* Light mode fallback (not primary, but available) */
+.light {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #d97706;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #fef3c7;
+  --accent-foreground: #92400e;
+  --destructive: #dc2626;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #d97706;
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #d97706;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #d97706;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Firefly Glow Effects */
+@layer utilities {
+  .glow-firefly {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4),
+                0 0 40px rgba(255, 165, 0, 0.2),
+                0 0 60px rgba(255, 215, 0, 0.1);
+  }
+
+  .glow-firefly-sm {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 165, 0, 0.15);
+  }
+
+  .glow-firefly-lg {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5),
+                0 0 60px rgba(255, 165, 0, 0.3),
+                0 0 90px rgba(255, 215, 0, 0.15);
+  }
+
+  .text-glow-firefly {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5),
+                 0 0 20px rgba(255, 165, 0, 0.3);
+  }
+
+  .gradient-dark {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  }
+
+  .gradient-firefly {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%);
+  }
+}
+
+/* Pulse animation for firefly effects */
+@keyframes firefly-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes firefly-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(-5px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(3px);
+  }
+}
+
+.animate-firefly-pulse {
+  animation: firefly-pulse 2s ease-in-out infinite;
+}
+
+.animate-firefly-float {
+  animation: firefly-float 6s ease-in-out infinite;
+}
