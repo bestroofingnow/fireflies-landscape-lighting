@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { GlowCard, FloatingOrbs, Spotlight } from "@/components/animations";
 
 const testimonials = [
   {
@@ -28,8 +29,12 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 bg-card">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section className="relative py-20 bg-card overflow-hidden">
+      <FloatingOrbs count={5} minSize={3} maxSize={7} speed="slow" color="rgba(255, 215, 0, 0.2)" />
+      <Spotlight size={250} color="rgba(255, 215, 0, 0.04)" className="top-20 left-[10%]" pulseIntensity={1.1} />
+      <Spotlight size={200} color="rgba(255, 215, 0, 0.03)" className="bottom-20 right-[15%]" pulseIntensity={1.15} />
+
+      <div className="container relative mx-auto px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -41,8 +46,7 @@ export function Testimonials() {
             What Our <span className="text-primary">Customers</span> Say
           </h2>
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            Don&apos;t just take our word for it - hear from homeowners who
-            trusted us with their landscape lighting.
+            Don&apos;t just take our word for it - hear from homeowners who trusted us with their landscape lighting.
           </p>
         </motion.div>
 
@@ -50,39 +54,35 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative rounded-xl bg-background p-6"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.5, delay: index * 0.12, ease: [0.25, 0.4, 0.25, 1] }}
             >
-              <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/20" />
+              <GlowCard className="h-full p-6" glowColor="255, 215, 0" glowOpacity={0.1} glowSize={200}>
+                <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/20" />
 
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < testimonial.rating
-                        ? "fill-primary text-primary"
-                        : "fill-muted text-muted"
-                    }`}
-                  />
-                ))}
-              </div>
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: index * 0.1 + i * 0.05 }}
+                    >
+                      <Star className={`h-4 w-4 ${i < testimonial.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`} />
+                    </motion.div>
+                  ))}
+                </div>
 
-              <p className="mb-4 text-muted-foreground">
-                &ldquo;{testimonial.text}&rdquo;
-              </p>
+                <p className="mb-4 text-muted-foreground relative z-10">&ldquo;{testimonial.text}&rdquo;</p>
 
-              <div>
-                <p className="font-semibold text-foreground">
-                  {testimonial.name}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {testimonial.location}
-                </p>
-              </div>
+                <div className="relative z-10">
+                  <p className="font-semibold text-foreground">{testimonial.name}</p>
+                  <p className="text-sm text-muted-foreground">{testimonial.location}</p>
+                </div>
+              </GlowCard>
             </motion.div>
           ))}
         </div>
@@ -91,12 +91,14 @@ export function Testimonials() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-12 text-center"
         >
-          <Button variant="outline" asChild>
-            <Link href="/reviews">Read More Reviews</Link>
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2 }} className="inline-block">
+            <Button variant="outline" asChild>
+              <Link href="/reviews">Read More Reviews</Link>
+            </Button>
+          </motion.div>
         </motion.div>
       </div>
     </section>

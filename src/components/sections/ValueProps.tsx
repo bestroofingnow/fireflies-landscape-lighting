@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Award, Shield, FileText, Moon } from "lucide-react";
 import { company } from "@/data/company";
+import { PulseGlowCard, FloatingOrbs, Spotlight } from "@/components/animations";
 
 const iconMap = {
   Award: Award,
@@ -13,8 +14,31 @@ const iconMap = {
 
 export function ValueProps() {
   return (
-    <section className="py-20 bg-card">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section className="relative py-20 bg-card overflow-hidden">
+      {/* Floating orbs background */}
+      <FloatingOrbs
+        count={8}
+        minSize={3}
+        maxSize={8}
+        speed="slow"
+        color="rgba(255, 215, 0, 0.25)"
+      />
+
+      {/* Subtle spotlights */}
+      <Spotlight
+        size={300}
+        color="rgba(255, 215, 0, 0.05)"
+        className="top-10 left-[20%]"
+        pulseIntensity={1.15}
+      />
+      <Spotlight
+        size={250}
+        color="rgba(255, 215, 0, 0.04)"
+        className="bottom-10 right-[15%]"
+        pulseIntensity={1.2}
+      />
+
+      <div className="container relative mx-auto px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -37,21 +61,39 @@ export function ValueProps() {
             return (
               <motion.div
                 key={prop.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative rounded-xl bg-background p-6 transition-all hover:bg-muted/50"
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                  ease: [0.25, 0.4, 0.25, 1],
+                }}
               >
-                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-foreground">
-                  {prop.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {prop.description}
-                </p>
+                <PulseGlowCard
+                  className="h-full p-6"
+                  glowColor="rgba(255, 215, 0, 0.08)"
+                  pulseSpeed={4 + index * 0.5}
+                >
+                  <motion.div
+                    className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                    whileHover={{
+                      scale: 1.15,
+                      backgroundColor: "rgb(var(--primary))",
+                      color: "rgb(var(--primary-foreground))",
+                      boxShadow: "0 0 25px rgba(255, 215, 0, 0.4)",
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </motion.div>
+                  <h3 className="mb-2 text-lg font-semibold text-foreground">
+                    {prop.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {prop.description}
+                  </p>
+                </PulseGlowCard>
               </motion.div>
             );
           })}

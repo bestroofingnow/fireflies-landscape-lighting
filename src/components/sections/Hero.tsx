@@ -6,36 +6,60 @@ import { motion } from "framer-motion";
 import { ArrowRight, Star, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
+import { FloatingOrbs, AmbientOrb, LightBeam } from "@/components/animations";
 
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-gradient-to-b from-background via-background to-card">
-      {/* Background firefly particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute h-1 w-1 rounded-full bg-primary/40"
-            initial={{
-              x: Math.random() * 100 + "%",
-              y: Math.random() * 100 + "%",
-              scale: Math.random() * 0.5 + 0.5,
-            }}
-            animate={{
-              y: [null, "-20%", "120%"],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: "linear",
-            }}
-            style={{
-              boxShadow: "0 0 10px rgba(255, 215, 0, 0.5)",
-            }}
-          />
-        ))}
+      {/* Ambient glow orbs for depth */}
+      <AmbientOrb
+        size={500}
+        position={{ x: "15%", y: "25%" }}
+        color="rgba(255, 215, 0, 0.05)"
+      />
+      <AmbientOrb
+        size={350}
+        position={{ x: "85%", y: "70%" }}
+        color="rgba(255, 215, 0, 0.04)"
+      />
+
+      {/* Floating firefly orbs */}
+      <FloatingOrbs
+        count={18}
+        minSize={3}
+        maxSize={10}
+        speed="slow"
+        color="rgba(255, 215, 0, 0.6)"
+      />
+
+      {/* Subtle diagonal light beams */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <LightBeam
+          direction="diagonal"
+          color="rgba(255, 215, 0, 0.06)"
+          duration={12}
+          intensity="subtle"
+          width="3px"
+          className="left-[5%]"
+        />
+        <LightBeam
+          direction="diagonal"
+          color="rgba(255, 215, 0, 0.05)"
+          duration={15}
+          delay={3}
+          intensity="subtle"
+          width="2px"
+          className="left-[55%]"
+        />
+        <LightBeam
+          direction="up"
+          color="rgba(255, 215, 0, 0.04)"
+          duration={10}
+          delay={1}
+          intensity="subtle"
+          width="2px"
+          className="left-[30%]"
+        />
       </div>
 
       <div className="container relative mx-auto px-4 py-20 lg:px-8 lg:py-32">
@@ -86,17 +110,35 @@ export function Hero() {
               </p>
             </div>
 
-            {/* Value props */}
+            {/* Value props with pulsing dots */}
             <div className="flex flex-wrap gap-4">
               {["10+ Years Experience", "Lifetime Warranty", "Free Demos"].map(
-                (prop) => (
-                  <div
+                (prop, index) => (
+                  <motion.div
                     key={prop}
                     className="flex items-center gap-2 text-sm text-muted-foreground"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1 }}
                   >
-                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <motion.div
+                      className="h-2 w-2 rounded-full bg-primary"
+                      animate={{
+                        scale: [1, 1.3, 1],
+                        opacity: [0.7, 1, 0.7],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: index * 0.3,
+                        ease: "easeInOut",
+                      }}
+                      style={{
+                        boxShadow: "0 0 8px rgba(255, 215, 0, 0.5)",
+                      }}
+                    />
                     {prop}
-                  </div>
+                  </motion.div>
                 )
               )}
             </div>
@@ -125,6 +167,24 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="relative"
           >
+            {/* Animated border glow */}
+            <motion.div
+              className="absolute -inset-1 rounded-2xl"
+              style={{
+                background:
+                  "linear-gradient(45deg, transparent 30%, rgba(255, 215, 0, 0.15) 50%, transparent 70%)",
+                backgroundSize: "200% 200%",
+              }}
+              animate={{
+                backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            />
+
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
               <Image
                 src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/m6cxxzu262nnl7wdnkdz.webp"
@@ -136,12 +196,38 @@ export function Hero() {
               {/* Overlay gradient for depth */}
               <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
 
-              {/* Decorative glow */}
-              <div
-                className="absolute -bottom-20 -right-20 h-40 w-40 rounded-full opacity-50"
+              {/* Animated corner glows */}
+              <motion.div
+                className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full pointer-events-none"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%)",
+                    "radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%)",
+                }}
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <motion.div
+                className="absolute -top-8 -left-8 h-24 w-24 rounded-full pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, transparent 70%)",
+                }}
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1,
                 }}
               />
             </div>
