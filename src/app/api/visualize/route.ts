@@ -134,9 +134,11 @@ export async function POST(request: NextRequest) {
 
     // Handle specific error types
     if (error instanceof Error) {
-      console.error("Full error:", error.message);
+      const errorMessage = error.message.toLowerCase();
+      console.error("Full error message:", error.message);
+      console.error("Error stack:", error.stack);
 
-      if (error.message.includes("quota")) {
+      if (errorMessage.includes("quota") || errorMessage.includes("rate limit")) {
         return NextResponse.json(
           {
             success: false,
@@ -147,11 +149,32 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (error.message.includes("API key")) {
+      if (errorMessage.includes("api key") || errorMessage.includes("api_key") || errorMessage.includes("invalid key") || errorMessage.includes("unauthorized")) {
         return NextResponse.json(
           {
             success: false,
-            message: "API configuration error. Please contact support.",
+            message: "API configuration error. Please ensure a valid Google AI API key is configured.",
+          },
+          { status: 500 }
+        );
+      }
+
+      if (errorMessage.includes("not found") || errorMessage.includes("404")) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "AI model not available. Please try again later.",
+          },
+          { status: 500 }
+        );
+      }
+
+      // Return the actual error for debugging in development
+      if (process.env.NODE_ENV === "development") {
+        return NextResponse.json(
+          {
+            success: false,
+            message: error.message,
           },
           { status: 500 }
         );
