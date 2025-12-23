@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,13 +46,15 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <span className="text-2xl font-bold text-primary">Fireflies</span>
-            <span className="ml-1 text-sm text-muted-foreground">
-              Landscape Lighting
-            </span>
-          </div>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/Fireflies.ai-2.webp"
+            alt="Fireflies Landscape Lighting"
+            width={180}
+            height={50}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}
