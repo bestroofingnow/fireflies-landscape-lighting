@@ -51,7 +51,7 @@ const lightingStylePrompts: Record<string, string> = {
     The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
 };
 
-// Try Gemini 3 Pro Image (Nano Banana Pro) first, then fallback to 2.5 Flash
+// Primary: Gemini 3 Pro Image (Nano Banana Pro)
 async function generateWithNanaBananaPro(
   genAI: GoogleGenerativeAI,
   prompt: string,
@@ -98,8 +98,52 @@ async function generateWithNanaBananaPro(
   return { image: generatedImage, text: textDescription };
 }
 
-// Fallback to Gemini 2.5 Flash for text description
-async function generateWithFlashFallback(
+// Fallback 1: Gemini 2.5 Flash (Nana Banana) with image generation
+async function generateWithNanaBanana(
+  genAI: GoogleGenerativeAI,
+  prompt: string,
+  imageData: string,
+  mimeType: string
+): Promise<{ image: string | null; text: string | null }> {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash-preview-05-20",
+    generationConfig: {
+      // @ts-expect-error - responseModalities is supported but not in types yet
+      responseModalities: ["Text", "Image"],
+    },
+  });
+
+  const imagePart = {
+    inlineData: {
+      data: imageData,
+      mimeType: mimeType || "image/jpeg",
+    },
+  };
+
+  const result = await model.generateContent([prompt, imagePart]);
+  const response = result.response;
+
+  let generatedImage: string | null = null;
+  let textDescription: string | null = null;
+
+  if (response.candidates && response.candidates[0]) {
+    const parts = response.candidates[0].content?.parts || [];
+
+    for (const part of parts) {
+      if ("inlineData" in part && part.inlineData) {
+        generatedImage = part.inlineData.data;
+      }
+      if ("text" in part && part.text) {
+        textDescription = part.text;
+      }
+    }
+  }
+
+  return { image: generatedImage, text: textDescription };
+}
+
+// Fallback 2: Text description only with Gemini 2.5 Flash
+async function generateTextDescription(
   genAI: GoogleGenerativeAI,
   prompt: string,
   imageData: string,
@@ -182,12 +226,10 @@ export async function POST(request: NextRequest) {
     const prompt = lightingStylePrompts[style];
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    let result: { image: string | null; text: string | null };
-
-    // Try Nano Banana Pro (Gemini 3 Pro Image) first
+    // Step 1: Try Nano Banana Pro (Gemini 3 Pro Image)
     try {
-      console.log("Attempting Gemini 3 Pro Image (Nano Banana Pro)...");
-      result = await generateWithNanaBananaPro(genAI, prompt, image, mimeType);
+      console.log("Step 1: Attempting Gemini 3 Pro Image (Nano Banana Pro)...");
+      const result = await generateWithNanaBananaPro(genAI, prompt, image, mimeType);
 
       if (result.image) {
         console.log("Successfully generated image with Nano Banana Pro");
@@ -199,17 +241,41 @@ export async function POST(request: NextRequest) {
           model: "gemini-3-pro-image-preview",
         });
       }
+      console.log("Nano Banana Pro did not return an image");
+    } catch (nanaBananaProError) {
+      console.log(
+        "Nano Banana Pro failed:",
+        nanaBananaProError instanceof Error ? nanaBananaProError.message : "Unknown error"
+      );
+    }
+
+    // Step 2: Fallback to Gemini 2.5 Flash (Nana Banana) for image generation
+    try {
+      console.log("Step 2: Attempting Gemini 2.5 Flash (Nana Banana) for image...");
+      const result = await generateWithNanaBanana(genAI, prompt, image, mimeType);
+
+      if (result.image) {
+        console.log("Successfully generated image with Nana Banana (2.5 Flash)");
+        return NextResponse.json({
+          success: true,
+          resultImage: result.image,
+          textDescription: result.text,
+          message: "Your home with professional landscape lighting:",
+          model: "gemini-2.5-flash-preview-05-20",
+        });
+      }
+      console.log("Nana Banana (2.5 Flash) did not return an image");
     } catch (nanaBananaError) {
       console.log(
-        "Nano Banana Pro failed, falling back to 2.5 Flash:",
+        "Nana Banana (2.5 Flash) image gen failed:",
         nanaBananaError instanceof Error ? nanaBananaError.message : "Unknown error"
       );
     }
 
-    // Fallback to Gemini 2.5 Flash for text description
+    // Step 3: Final fallback - Text description only with Gemini 2.5 Flash
     try {
-      console.log("Falling back to Gemini 2.5 Flash...");
-      result = await generateWithFlashFallback(genAI, prompt, image, mimeType);
+      console.log("Step 3: Falling back to text description with Gemini 2.5 Flash...");
+      const result = await generateTextDescription(genAI, prompt, image, mimeType);
 
       if (result.text) {
         return NextResponse.json({
@@ -218,11 +284,11 @@ export async function POST(request: NextRequest) {
           textDescription: result.text,
           message:
             "Here's how your home would look with professional landscape lighting:",
-          model: "gemini-2.5-flash-preview-05-20",
+          model: "gemini-2.5-flash-preview-05-20 (text)",
         });
       }
-    } catch (flashError) {
-      console.error("Flash fallback also failed:", flashError);
+    } catch (textError) {
+      console.error("Text description also failed:", textError);
     }
 
     return NextResponse.json(
