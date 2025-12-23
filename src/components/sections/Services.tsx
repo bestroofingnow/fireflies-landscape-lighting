@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Lightbulb, Wrench, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,11 @@ import { GlowCard, FloatingOrbs, AmbientOrb } from "@/components/animations";
 const iconMap = {
   design: Lightbulb,
   installation: Wrench,
+};
+
+const serviceImages = {
+  design: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-content-home-02.webp",
+  installation: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/wrsysnt4qrkofgtmo0to.webp",
 };
 
 export function Services() {
@@ -38,6 +44,7 @@ export function Services() {
         <div className="grid gap-8 lg:grid-cols-2">
           {company.services.map((service, index) => {
             const Icon = iconMap[service.slug as keyof typeof iconMap];
+            const serviceImage = serviceImages[service.slug as keyof typeof serviceImages];
             return (
               <motion.div
                 key={service.slug}
@@ -46,23 +53,26 @@ export function Services() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.15 }}
               >
-                <GlowCard className="h-full p-8" glowColor="255, 215, 0" glowOpacity={0.12} glowSize={300}>
-                  <motion.div
-                    className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-primary/5 pointer-events-none"
-                    initial={{ scale: 1, opacity: 0.05 }}
-                    whileHover={{ scale: 1.5, opacity: 0.15 }}
-                    transition={{ duration: 0.4 }}
-                  />
-
-                  <div className="relative">
+                <GlowCard className="h-full overflow-hidden" glowColor="255, 215, 0" glowOpacity={0.12} glowSize={300}>
+                  {/* Service Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={serviceImage}
+                      alt={service.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
                     <motion.div
-                      className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary cursor-pointer"
+                      className="absolute top-4 left-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-background/90 backdrop-blur-sm text-primary shadow-lg"
                       whileHover={{ scale: 1.1, boxShadow: "0 0 20px rgba(255, 215, 0, 0.3)" }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Icon className="h-7 w-7" />
+                      <Icon className="h-6 w-6" />
                     </motion.div>
+                  </div>
 
+                  <div className="relative p-8 pt-4">
                     <h3 className="mb-3 text-2xl font-bold text-foreground">{service.title}</h3>
                     <p className="mb-6 text-muted-foreground">{service.description}</p>
 

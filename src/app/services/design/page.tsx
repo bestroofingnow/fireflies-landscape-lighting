@@ -43,31 +43,37 @@ const lightingTypes = [
     name: "Architectural Uplighting",
     description:
       "Highlight your home's facade, columns, and architectural features with dramatic uplighting.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/w0acuczzlpqjns0sc1ng.webp",
   },
   {
     name: "Path & Walkway Lighting",
     description:
       "Create safe, welcoming pathways with elegant fixtures that guide visitors to your door.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/uklrmo3docwipepmvssv.webp",
   },
   {
     name: "Garden & Accent Lighting",
     description:
       "Showcase trees, shrubs, and landscaping features with carefully positioned accent lights.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/or5njm3imbn6rs5bympj.webp",
   },
   {
     name: "Outdoor Living Lighting",
     description:
       "Transform patios, decks, and entertaining areas into inviting nighttime spaces.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fy1djbatv0utca6rntwx.webp",
   },
   {
     name: "Security Lighting",
     description:
       "Illuminate entry points and dark areas for enhanced safety and peace of mind.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/pmwmbtkc277ysgp7nqtn.webp",
   },
   {
     name: "Water Feature Lighting",
     description:
       "Make fountains, pools, and water features shimmer with underwater and perimeter lighting.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/ebwyw6zjq23s9mjbglpj.webp",
   },
 ];
 
@@ -167,12 +173,23 @@ export default function DesignPage() {
             {lightingTypes.map((type) => (
               <div
                 key={type.name}
-                className="rounded-xl bg-card p-6 border border-border"
+                className="group rounded-xl bg-card overflow-hidden border border-border hover:border-primary/30 transition-colors"
               >
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {type.name}
-                </h3>
-                <p className="text-muted-foreground">{type.description}</p>
+                <div className="relative h-40 overflow-hidden">
+                  <Image
+                    src={type.image}
+                    alt={type.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
+                </div>
+                <div className="p-6 pt-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {type.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{type.description}</p>
+                </div>
               </div>
             ))}
           </div>

@@ -41,6 +41,7 @@ const installationFeatures = [
 const installationProcess = [
   {
     title: "Pre-Installation Prep",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/ewugtlrxb0xceklrnewv.webp",
     items: [
       "Review final design and fixture placement",
       "Mark utility lines and irrigation systems",
@@ -50,6 +51,7 @@ const installationProcess = [
   },
   {
     title: "Installation Day",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/sj8irtvvjw8gcbocxigg.webp",
     items: [
       "Position and install all fixtures",
       "Route wiring underground (hidden from view)",
@@ -59,6 +61,7 @@ const installationProcess = [
   },
   {
     title: "Final Touches",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/twbtjypo4ujkivkndbpa.webp",
     items: [
       "Aim and adjust all fixtures",
       "Program timers and smart controls",
@@ -151,27 +154,36 @@ export default function InstallationPage() {
             {installationProcess.map((phase, index) => (
               <div
                 key={phase.title}
-                className="rounded-xl bg-card p-6 border border-border"
+                className="group rounded-xl bg-card overflow-hidden border border-border hover:border-primary/30 transition-colors"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+                <div className="relative h-40 overflow-hidden">
+                  <Image
+                    src={phase.image}
+                    alt={phase.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+                  <div className="absolute bottom-4 left-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold shadow-lg">
                     {index + 1}
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-foreground mb-4">
                     {phase.title}
                   </h3>
+                  <ul className="space-y-3">
+                    {phase.items.map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-start gap-3 text-sm text-muted-foreground"
+                      >
+                        <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="space-y-3">
-                  {phase.items.map((item) => (
-                    <li
-                      key={item}
-                      className="flex items-start gap-3 text-muted-foreground"
-                    >
-                      <Check className="h-5 w-5 shrink-0 text-primary mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             ))}
           </div>

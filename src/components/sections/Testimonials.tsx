@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import Link from "next/link";
@@ -12,18 +13,21 @@ const testimonials = [
     location: "Mooresville, NC",
     rating: 5,
     text: "Fireflies transformed our backyard into a magical space! The team was professional, punctual, and the results exceeded our expectations. Highly recommend!",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-video-01.webp",
   },
   {
     name: "Michael R.",
     location: "Lake Wylie, SC",
     rating: 5,
     text: "We've gotten so many compliments on our new landscape lighting. John and his team really know their stuff. The free nighttime demo was incredibly helpful.",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/w0acuczzlpqjns0sc1ng.webp",
   },
   {
     name: "Jennifer L.",
     location: "Charlotte, NC",
     rating: 5,
     text: "Best decision we made for our home's curb appeal. The lighting design they created highlights our home beautifully. Worth every penny!",
+    image: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/or5njm3imbn6rs5bympj.webp",
   },
 ];
 
@@ -59,28 +63,40 @@ export function Testimonials() {
               viewport={{ once: true, margin: "-30px" }}
               transition={{ duration: 0.5, delay: index * 0.12, ease: [0.25, 0.4, 0.25, 1] }}
             >
-              <GlowCard className="h-full p-6" glowColor="255, 215, 0" glowOpacity={0.1} glowSize={200}>
-                <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/20" />
-
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: index * 0.1 + i * 0.05 }}
-                    >
-                      <Star className={`h-4 w-4 ${i < testimonial.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`} />
-                    </motion.div>
-                  ))}
+              <GlowCard className="h-full overflow-hidden" glowColor="255, 215, 0" glowOpacity={0.1} glowSize={200}>
+                {/* Background image */}
+                <div className="relative h-28 overflow-hidden">
+                  <Image
+                    src={testimonial.image}
+                    alt={`Project for ${testimonial.name}`}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/70 to-card" />
+                  <Quote className="absolute right-4 top-4 h-8 w-8 text-white/30" />
                 </div>
 
-                <p className="mb-4 text-muted-foreground relative z-10">&ldquo;{testimonial.text}&rdquo;</p>
+                <div className="p-6 pt-2">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.3, delay: index * 0.1 + i * 0.05 }}
+                      >
+                        <Star className={`h-4 w-4 ${i < testimonial.rating ? "fill-primary text-primary" : "fill-muted text-muted"}`} />
+                      </motion.div>
+                    ))}
+                  </div>
 
-                <div className="relative z-10">
-                  <p className="font-semibold text-foreground">{testimonial.name}</p>
-                  <p className="text-sm text-muted-foreground">{testimonial.location}</p>
+                  <p className="mb-4 text-muted-foreground relative z-10">&ldquo;{testimonial.text}&rdquo;</p>
+
+                  <div className="relative z-10">
+                    <p className="font-semibold text-foreground">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.location}</p>
+                  </div>
                 </div>
               </GlowCard>
             </motion.div>

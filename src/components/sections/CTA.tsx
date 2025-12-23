@@ -24,13 +24,13 @@ export function CTA({
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
-          src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/12/image-30.png"
-          alt="Landscape lighting background"
+          src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fy1djbatv0utca6rntwx.webp"
+          alt="Beautiful landscape lighting at night"
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-background/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20" />
+        <div className="absolute inset-0 bg-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/15" />
       </div>
 
       <AmbientOrb size={400} position={{ x: "20%", y: "50%" }} color="rgba(255, 215, 0, 0.06)" />
