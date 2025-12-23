@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
     // Get the prompt for the selected style
     const prompt = lightingStylePrompts[style];
 
-    // Convert base64 to Uint8Array for the AI SDK
-    const imageBuffer = Buffer.from(image, "base64");
+    // Create data URL from base64 image
+    const imageDataUrl = `data:${mimeType || "image/jpeg"};base64,${image}`;
 
     // Use Gemini 2.0 Flash via Vercel AI SDK (supports vision)
     const result = await generateText({
@@ -118,8 +118,7 @@ export async function POST(request: NextRequest) {
             },
             {
               type: "image",
-              image: imageBuffer,
-              mimeType: mimeType || "image/jpeg",
+              image: imageDataUrl,
             },
           ],
         },
