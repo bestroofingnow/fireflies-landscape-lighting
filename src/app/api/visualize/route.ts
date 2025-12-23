@@ -7,110 +7,122 @@ export const maxDuration = 60;
 // Note: For body size limits in App Router, use next.config.js
 // The default is usually enough for base64 images under 10MB
 
+// Base instruction that applies to ALL lighting styles - preserves original image
+const BASE_PRESERVATION_INSTRUCTION = `CRITICAL IMAGE PRESERVATION RULES - READ FIRST:
+- DO NOT add, remove, or modify ANY physical elements in the image
+- DO NOT add new trees, bushes, plants, paths, walkways, fences, or landscaping
+- DO NOT change the house structure, windows, doors, roof, or architecture
+- DO NOT add or remove any objects, furniture, vehicles, or decorations
+- ONLY change the TIME OF DAY to evening/night (deep twilight blue sky)
+- ONLY add LIGHTING FIXTURES and their LIGHT EFFECTS to existing elements
+- The image must look like the EXACT SAME property, just at night with lights added
+
+`;
+
 // Lighting style prompts for image generation - each style is EXCLUSIVE
 const lightingStylePrompts: Record<string, string> = {
-  architectural: `Transform this home exterior to nighttime with ONLY architectural uplighting on the building structure.
+  architectural: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with ONLY architectural uplighting on the building structure.
 
 STYLE FOCUS - ARCHITECTURAL UPLIGHTING ONLY:
 - Add 3-5 brass/bronze LED uplights (2700K warm amber) positioned at the base of the home facade
 - Angle lights upward at 15-30 degrees to wash the walls with warm light
-- Highlight columns, stone/brick textures, window frames, and rooflines
+- Highlight existing columns, stone/brick textures, window frames, and rooflines
 - Create dramatic upward light beams on the building facade
 - Add subtle warm glow halos around each fixture
 
-CRITICAL - DO NOT ADD:
+LIGHTING RESTRICTIONS:
 - NO pathway lights or walkway fixtures
 - NO tree or garden lighting
 - NO string lights or patio lights
 - NO floodlights or security lights
-- ONLY illuminate the building itself
+- ONLY add uplighting on the existing building
 
-The sky should be deep twilight blue. Add realistic shadows and light falloff. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). Add realistic shadows and light falloff from the fixtures.`,
 
-  pathway: `Transform this home exterior to nighttime with ONLY pathway and walkway lighting.
+  pathway: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with ONLY pathway and walkway lighting.
 
 STYLE FOCUS - PATH LIGHTING ONLY:
-- Add 6-10 low-voltage brass path lights along visible walkways, driveways, and garden borders
-- Space fixtures 6-8 feet apart in a consistent pattern
+- Add 6-10 low-voltage brass path lights ONLY along EXISTING visible walkways, driveways, and garden borders
+- Space fixtures 6-8 feet apart following the existing path layout
 - Each path light should cast a warm amber pool of light (2700K) on the ground
 - Use mushroom-cap or hat-style path light fixtures
-- Create overlapping pools of light along the walking path
+- Create overlapping pools of light along the existing walking paths
 
-CRITICAL - DO NOT ADD:
+LIGHTING RESTRICTIONS:
 - NO uplighting on the house facade
 - NO tree spotlights or garden accent lights
 - NO string lights or patio lighting
 - NO floodlights or security lighting
-- ONLY illuminate walkways and paths
+- ONLY add path lights to EXISTING walkways - do not create new paths
 
-The sky should be deep twilight blue. The home should remain mostly in shadow except where path light spills naturally. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). The home should remain mostly in shadow except where path light spills naturally.`,
 
-  garden: `Transform this home exterior to nighttime with ONLY garden and landscape accent lighting.
+  garden: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with ONLY garden and landscape accent lighting.
 
 STYLE FOCUS - GARDEN/TREE LIGHTING ONLY:
-- Add dramatic uplights at the base of trees to silhouette branches against the night sky
-- Position 2-3 spotlights to highlight specimen plants, shrubs, or garden features
-- Use warm amber LEDs (2700K-3000K) with visible light beams through foliage
-- Create moonlighting effects through tree canopies where applicable
-- Add subtle ground-level accent lights near flower beds or landscape features
+- Add dramatic uplights at the base of EXISTING trees to silhouette their branches against the night sky
+- Position 2-3 spotlights to highlight EXISTING plants, shrubs, or garden features that are visible in the photo
+- Use warm amber LEDs (2700K-3000K) with visible light beams through existing foliage
+- Create moonlighting effects through existing tree canopies where applicable
+- Add subtle ground-level accent lights near existing flower beds or landscape features
 
-CRITICAL - DO NOT ADD:
+LIGHTING RESTRICTIONS:
 - NO uplighting on the house facade or walls
 - NO pathway lights along walkways
 - NO string lights or patio fixtures
 - NO floodlights or security lighting
-- ONLY illuminate trees, plants, and landscaping
+- ONLY illuminate EXISTING trees, plants, and landscaping - do not add new plants
 
-The sky should be deep twilight blue. The home should remain in shadow - focus lighting on landscape elements only. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). The home should remain in shadow - focus lighting on existing landscape elements only.`,
 
-  outdoor_living: `Transform this home exterior to nighttime with ONLY outdoor living space ambient lighting.
+  outdoor_living: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with ONLY outdoor living space ambient lighting.
 
 STYLE FOCUS - PATIO/DECK AMBIENT LIGHTING ONLY:
-- Add warm string lights or bistro lights over patio/deck areas if visible
-- Include subtle recessed soffit lights under eaves or overhangs
-- Add wall-mounted sconces near doors or seating areas
+- Add warm string lights or bistro lights over EXISTING patio/deck areas if visible in the photo
+- Include subtle recessed soffit lights under existing eaves or overhangs
+- Add wall-mounted sconces near existing doors or seating areas
 - Create a cozy, intimate ambiance with warm white light (2700K)
-- Focus on entertaining spaces - patios, decks, porches, pergolas
+- Focus on EXISTING entertaining spaces - patios, decks, porches, pergolas that are in the photo
 
-CRITICAL - DO NOT ADD:
+LIGHTING RESTRICTIONS:
 - NO dramatic uplighting on the house facade
 - NO pathway lights along walkways
 - NO tree spotlights or garden accent lights
 - NO bright floodlights or security lighting
-- ONLY illuminate outdoor living/entertaining spaces
+- ONLY illuminate EXISTING outdoor living spaces - do not add new structures
 
-The sky should be deep twilight blue. Create an inviting atmosphere for the living spaces. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). Create an inviting atmosphere for existing living spaces.`,
 
-  security: `Transform this home exterior to nighttime with ONLY security and safety lighting.
+  security: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with ONLY security and safety lighting.
 
 STYLE FOCUS - SECURITY LIGHTING ONLY:
-- Add 2-3 motion-sensor style LED floodlights at entry points (garage, front door, side gates)
-- Include eave-mounted downlights for perimeter visibility
+- Add 2-3 motion-sensor style LED floodlights at EXISTING entry points (garage, front door, side gates)
+- Include eave-mounted downlights on existing eaves for perimeter visibility
 - Use brighter, whiter light (3000-4000K) typical of security fixtures
-- Ensure even coverage at vulnerable entry points
-- Add subtle dusk-to-dawn fixtures near doors
+- Ensure even coverage at existing vulnerable entry points
+- Add subtle dusk-to-dawn fixtures near existing doors
 
-CRITICAL - DO NOT ADD:
+LIGHTING RESTRICTIONS:
 - NO decorative uplighting on the facade
 - NO pathway lights or walkway fixtures
 - NO garden accent lights or tree spotlights
 - NO string lights or ambient patio lighting
-- ONLY functional security/safety illumination
+- ONLY add functional security lighting to EXISTING structures
 
-The sky should be deep twilight blue. Focus on practical visibility and entry point illumination. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). Focus on practical visibility and existing entry point illumination.`,
 
-  combination: `Transform this home exterior to nighttime with a COMPLETE professional landscape lighting design.
+  combination: BASE_PRESERVATION_INSTRUCTION + `Transform this home exterior to nighttime with a COMPLETE professional landscape lighting design.
 
-INCLUDE ALL FIVE LIGHTING TYPES:
-1. ARCHITECTURAL: Warm amber uplights (2700K) washing the home facade, highlighting columns and textures
-2. PATHWAY: Brass path lights every 6-8 feet along all visible walkways and driveways
-3. GARDEN: Dramatic tree uplights and accent spots on landscape features
-4. OUTDOOR LIVING: String lights or ambient fixtures over patios/decks, wall sconces near doors
-5. SECURITY: Subtle eave-mounted downlights at entry points for safety
+INCLUDE ALL FIVE LIGHTING TYPES ON EXISTING ELEMENTS:
+1. ARCHITECTURAL: Warm amber uplights (2700K) washing the existing home facade, highlighting existing columns and textures
+2. PATHWAY: Brass path lights every 6-8 feet along all EXISTING visible walkways and driveways
+3. GARDEN: Dramatic uplights on EXISTING trees and accent spots on existing landscape features
+4. OUTDOOR LIVING: String lights or ambient fixtures over EXISTING patios/decks, wall sconces near existing doors
+5. SECURITY: Subtle eave-mounted downlights at existing entry points for safety
 
-Create a cohesive, layered lighting design that balances all elements. Use warm color temperatures (2700K-3000K) for decorative elements. Add realistic glows, light beams, and natural shadow interplay.
+Create a cohesive, layered lighting design on the EXISTING property elements. Use warm color temperatures (2700K-3000K) for decorative elements. Add realistic glows, light beams, and natural shadow interplay.
 
-The sky should be deep twilight blue. This should look like a premium, professionally-designed lighting installation. Keep the home structure exactly the same.`,
+The sky must be deep twilight blue (evening/dusk). This should look like the EXACT SAME property with premium, professionally-designed lighting installed.`,
 };
 
 // Primary: Gemini 3 Pro Image (Nano Banana Pro)
