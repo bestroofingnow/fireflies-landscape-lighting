@@ -1,8 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
-
-// Initialize the Gemini client
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
 // Lighting style prompts
 const lightingStylePrompts: Record<string, string> = {
@@ -92,32 +88,48 @@ export async function POST(request: NextRequest) {
     // Get the prompt for the selected style
     const prompt = lightingStylePrompts[style];
 
-    // Call Gemini API
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
-      contents: [
-        {
-          role: "user",
-          parts: [
+    // Call Gemini API directly for image generation
+    // Using gemini-2.0-flash-exp which supports image output
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY,
+        },
+        body: JSON.stringify({
+          contents: [
             {
-              text: prompt,
-            },
-            {
-              inlineData: {
-                mimeType: mimeType || "image/jpeg",
-                data: image,
-              },
+              role: "user",
+              parts: [
+                { text: prompt },
+                {
+                  inlineData: {
+                    mimeType: mimeType || "image/jpeg",
+                    data: image,
+                  },
+                },
+              ],
             },
           ],
-        },
-      ],
-      config: {
-        responseModalities: ["image", "text"],
-      },
-    });
+          generationConfig: {
+            responseModalities: ["TEXT", "IMAGE"],
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error:", errorText);
+      throw new Error(`API request failed: ${response.status}`);
+    }
+
+    const data = await response.json();
 
     // Extract image from response
-    const candidates = response.candidates;
+    const candidates = data.candidates;
     if (!candidates || candidates.length === 0) {
       return NextResponse.json(
         { success: false, message: "No response from AI model" },
@@ -138,7 +150,7 @@ export async function POST(request: NextRequest) {
 
     for (const part of parts) {
       if (part.inlineData) {
-        resultImage = part.inlineData.data as string;
+        resultImage = part.inlineData.data;
       }
       if (part.text) {
         textResponse = part.text;
@@ -188,13 +200,15 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+
+      console.error("Full error:", error.message);
     }
 
     return NextResponse.json(
       {
         success: false,
         message:
-          "An error occurred while processing your image. Please try again.",
+          "An error occurred while processing your image. Please try again or contact us for a free demonstration.",
       },
       { status: 500 }
     );
