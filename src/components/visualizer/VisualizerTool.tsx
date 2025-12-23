@@ -5,13 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
   Sparkles,
-  Download,
   RefreshCw,
   Loader2,
   X,
   Check,
   ArrowRight,
   AlertCircle,
+  Lightbulb,
+  Copy,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -59,10 +61,11 @@ export function VisualizerTool() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedMimeType, setUploadedMimeType] = useState<string>("image/jpeg");
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
-  const [resultImage, setResultImage] = useState<string | null>(null);
+  const [textDescription, setTextDescription] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -114,7 +117,7 @@ export function VisualizerTool() {
     reader.onload = (e) => {
       const base64 = (e.target?.result as string).split(",")[1];
       setUploadedImage(base64);
-      setResultImage(null);
+      setTextDescription(null);
     };
     reader.readAsDataURL(file);
   };
@@ -144,7 +147,7 @@ export function VisualizerTool() {
         throw new Error(data.message || "Failed to generate visualization");
       }
 
-      setResultImage(data.resultImage);
+      setTextDescription(data.textDescription);
     } catch (err) {
       setError(
         err instanceof Error
@@ -156,22 +159,24 @@ export function VisualizerTool() {
     }
   };
 
-  const handleDownload = () => {
-    if (!resultImage) return;
+  const handleCopyDescription = async () => {
+    if (!textDescription) return;
 
-    const link = document.createElement("a");
-    link.href = `data:image/png;base64,${resultImage}`;
-    link.download = "fireflies-lighting-visualization.png";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      await navigator.clipboard.writeText(textDescription);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
   };
 
   const handleReset = () => {
     setUploadedImage(null);
     setSelectedStyle(null);
-    setResultImage(null);
+    setTextDescription(null);
     setError(null);
+    setCopied(false);
   };
 
   return (
@@ -347,7 +352,7 @@ export function VisualizerTool() {
               <h2 className="text-lg font-semibold text-foreground">
                 3. See Your Results
               </h2>
-              <div className="relative aspect-[4/3] rounded-2xl bg-card border border-border overflow-hidden">
+              <div className="relative min-h-[300px] rounded-2xl bg-card border border-border overflow-hidden">
                 <AnimatePresence mode="wait">
                   {isLoading ? (
                     <motion.div
@@ -372,25 +377,38 @@ export function VisualizerTool() {
                         <Sparkles className="h-8 w-8 text-primary" />
                       </motion.div>
                       <p className="text-muted-foreground">
-                        Creating your visualization...
+                        Analyzing your home...
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        This may take 15-30 seconds
+                        Creating personalized lighting recommendations
                       </p>
                     </motion.div>
-                  ) : resultImage ? (
+                  ) : textDescription ? (
                     <motion.div
                       key="result"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="absolute inset-0"
+                      className="p-6"
                     >
-                      <img
-                        src={`data:image/png;base64,${resultImage}`}
-                        alt="Lighting visualization"
-                        className="w-full h-full object-cover"
-                      />
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Lightbulb className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">
+                            Your Lighting Vision
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            AI-generated design recommendation
+                          </p>
+                        </div>
+                      </div>
+                      <div className="prose prose-sm prose-invert max-w-none">
+                        <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                          {textDescription}
+                        </p>
+                      </div>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -404,7 +422,7 @@ export function VisualizerTool() {
                         <Sparkles className="h-8 w-8 text-primary/50" />
                       </div>
                       <p className="text-muted-foreground text-center">
-                        Your AI-generated lighting visualization will appear here
+                        Your personalized lighting design will appear here
                       </p>
                     </motion.div>
                   )}
@@ -412,7 +430,7 @@ export function VisualizerTool() {
               </div>
 
               {/* Result Actions */}
-              {resultImage && (
+              {textDescription && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -420,16 +438,25 @@ export function VisualizerTool() {
                 >
                   <Button
                     variant="outline"
-                    onClick={handleDownload}
+                    onClick={handleCopyDescription}
                     className="flex-1"
                   >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Image
+                    {copied ? (
+                      <>
+                        <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Description
+                      </>
+                    )}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setResultImage(null);
+                      setTextDescription(null);
                       setSelectedStyle(null);
                     }}
                     className="flex-1"
@@ -441,7 +468,7 @@ export function VisualizerTool() {
               )}
 
               {/* CTA Card */}
-              {resultImage && (
+              {textDescription && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -449,11 +476,11 @@ export function VisualizerTool() {
                   className="rounded-2xl bg-primary/10 border border-primary/20 p-6"
                 >
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Want this for your home?
+                    Love this vision for your home?
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Get a free professional estimate and see how we can bring
-                    this vision to life with our expert installation.
+                    Get a free professional consultation and let our experts
+                    bring this lighting design to life with expert installation.
                   </p>
                   <Button asChild className="w-full glow-firefly-sm">
                     <Link href="/get-estimate">

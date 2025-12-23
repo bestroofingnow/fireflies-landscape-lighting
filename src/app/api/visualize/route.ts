@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { generateText } from "ai";
 
 // Lighting style prompts
 const lightingStylePrompts: Record<string, string> = {
@@ -88,97 +90,57 @@ export async function POST(request: NextRequest) {
     // Get the prompt for the selected style
     const prompt = lightingStylePrompts[style];
 
-    // Call Gemini API directly for image generation
-    // Using gemini-2.5-flash which supports image output
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": process.env.GEMINI_API_KEY,
-        },
-        body: JSON.stringify({
-          contents: [
+    // Initialize Google provider for Vercel AI Gateway
+    const google = createGoogleGenerativeAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+
+    // Use Gemini 2.5 Flash via Vercel AI SDK
+    const result = await generateText({
+      model: google("gemini-2.5-flash-preview-05-20"),
+      messages: [
+        {
+          role: "user",
+          content: [
             {
-              role: "user",
-              parts: [
-                { text: prompt },
-                {
-                  inlineData: {
-                    mimeType: mimeType || "image/jpeg",
-                    data: image,
-                  },
-                },
-              ],
+              type: "text",
+              text: `You are a professional landscape lighting visualization expert.
+
+              Analyze this home exterior image and create a detailed description of how the following lighting design would transform it:
+
+              ${prompt}
+
+              Provide a vivid, detailed description of:
+              1. Where each light fixture would be placed
+              2. How the light would fall on the architecture and landscaping
+              3. The overall ambiance and mood created
+              4. Specific features that would be highlighted
+
+              Make the description so vivid that the homeowner can visualize exactly how their home would look with professional landscape lighting installed.`,
+            },
+            {
+              type: "image",
+              image: `data:${mimeType || "image/jpeg"};base64,${image}`,
             },
           ],
-          generationConfig: {
-            responseModalities: ["TEXT", "IMAGE"],
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", errorText);
-      throw new Error(`API request failed: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Extract image from response
-    const candidates = data.candidates;
-    if (!candidates || candidates.length === 0) {
-      return NextResponse.json(
-        { success: false, message: "No response from AI model" },
-        { status: 500 }
-      );
-    }
-
-    const parts = candidates[0].content?.parts;
-    if (!parts) {
-      return NextResponse.json(
-        { success: false, message: "No content in AI response" },
-        { status: 500 }
-      );
-    }
-
-    let resultImage: string | null = null;
-    let textResponse: string | null = null;
-
-    for (const part of parts) {
-      if (part.inlineData) {
-        resultImage = part.inlineData.data;
-      }
-      if (part.text) {
-        textResponse = part.text;
-      }
-    }
-
-    if (!resultImage) {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            textResponse ||
-            "Could not generate image. Please try a different photo or style.",
         },
-        { status: 500 }
-      );
-    }
+      ],
+    });
 
+    // Return the text description since image generation isn't supported
     return NextResponse.json({
       success: true,
-      resultImage,
-      message: textResponse || "Visualization generated successfully!",
+      resultImage: null,
+      textDescription: result.text,
+      message: "Analysis complete! Here's how your home would look with professional landscape lighting:",
     });
   } catch (error) {
     console.error("Visualizer API error:", error);
 
     // Handle specific error types
     if (error instanceof Error) {
+      console.error("Full error:", error.message);
+
       if (error.message.includes("quota")) {
         return NextResponse.json(
           {
@@ -190,18 +152,15 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (error.message.includes("invalid")) {
+      if (error.message.includes("API key")) {
         return NextResponse.json(
           {
             success: false,
-            message:
-              "Invalid image format. Please upload a JPEG, PNG, or WebP image.",
+            message: "API configuration error. Please contact support.",
           },
-          { status: 400 }
+          { status: 500 }
         );
       }
-
-      console.error("Full error:", error.message);
     }
 
     return NextResponse.json(

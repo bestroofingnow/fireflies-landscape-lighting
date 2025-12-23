@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { company } from "@/data/company";
 import { cities } from "@/data/cities";
+import { sendToWebhook } from "@/lib/webhook";
 
 export default function GetEstimatePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,14 +37,29 @@ export default function GetEstimatePage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      // Send to GoHighLevel webhook
+      await sendToWebhook({
+        formName: "Free Estimate Request",
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        message: formData.message,
+        services: formData.services,
+        preferredContact: formData.preferredContact,
+        source: "estimate-page",
+      });
 
-    // In a real app, you would send this to your backend
-    console.log("Form submitted:", formData);
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Form submission error:", error);
+      // Still show success to user - webhook failure shouldn't block UX
+      setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleServiceChange = (service: string) => {

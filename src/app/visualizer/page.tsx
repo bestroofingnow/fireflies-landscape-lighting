@@ -5,7 +5,7 @@ import { CTA } from "@/components/sections";
 export const metadata: Metadata = {
   title: "AI Lighting Visualizer",
   description:
-    "Upload a photo of your home and see how professional landscape lighting will transform your property. Free AI-powered visualization tool from Fireflies Landscape Lighting.",
+    "Upload a photo of your home and get personalized AI-powered lighting design recommendations. Free visualization tool from Fireflies Landscape Lighting.",
 };
 
 export default function VisualizerPage() {
