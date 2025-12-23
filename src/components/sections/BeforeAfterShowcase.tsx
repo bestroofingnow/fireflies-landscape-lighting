@@ -6,13 +6,13 @@ import { Sparkles } from "lucide-react";
 
 const showcaseItems = [
   {
-    beforeImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/before-daytime-home.webp",
-    afterImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/z7yugipojvuezldrrfsu.webp",
+    beforeImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-content-home-02.webp",
+    afterImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/w0acuczzlpqjns0sc1ng.webp",
     title: "Architectural Uplighting",
     description: "Highlight your home's best features with dramatic uplighting",
   },
   {
-    beforeImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/before-daytime-home.webp",
+    beforeImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/sb38qzydzbfdynullyzs.webp",
     afterImage: "https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/wrsysnt4qrkofgtmo0to.webp",
     title: "Garden & Landscape",
     description: "Transform your landscaping into a nighttime showpiece",
