@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 
 // Lighting style prompts
@@ -57,13 +57,13 @@ const lightingStylePrompts: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check for API key
-    if (!process.env.GEMINI_API_KEY) {
+    // Check for API key (Vercel AI SDK uses GOOGLE_GENERATIVE_AI_API_KEY)
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       return NextResponse.json(
         {
           success: false,
           message:
-            "Gemini API key not configured. Please add GEMINI_API_KEY to your environment variables.",
+            "Google AI API key not configured. Please add GOOGLE_GENERATIVE_AI_API_KEY to your environment variables.",
         },
         { status: 500 }
       );
@@ -90,14 +90,9 @@ export async function POST(request: NextRequest) {
     // Get the prompt for the selected style
     const prompt = lightingStylePrompts[style];
 
-    // Initialize Google provider for Vercel AI Gateway
-    const google = createGoogleGenerativeAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
-
-    // Use Gemini 2.5 Flash via Vercel AI SDK
+    // Use Gemini 2.0 Flash via Vercel AI SDK (supports vision)
     const result = await generateText({
-      model: google("gemini-2.5-flash-preview-05-20"),
+      model: google("gemini-2.0-flash"),
       messages: [
         {
           role: "user",
