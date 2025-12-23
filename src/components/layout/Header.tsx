@@ -32,7 +32,6 @@ const navigation = [
       href: `/service-areas/${city.slug}`,
     })),
   },
-  { name: "Gallery", href: "/gallery" },
   { name: "Visualizer", href: "/visualizer" },
   { name: "Blog", href: "/blog" },
   { name: "About", href: "/about" },
