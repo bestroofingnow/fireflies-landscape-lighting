@@ -187,7 +187,7 @@ export function Hero() {
 
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
               <Image
-                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/m6cxxzu262nnl7wdnkdz.webp"
+                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-hero-landscape-lighting-installation.webp"
                 alt="Professional landscape lighting on a beautiful home at night"
                 fill
                 className="object-cover"

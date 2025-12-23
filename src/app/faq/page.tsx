@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
@@ -145,8 +146,17 @@ export default function FAQPage() {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-background to-card py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="relative bg-gradient-to-b from-background to-card py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/z7yugipojvuezldrrfsu.webp"
+            alt="Professional landscape lighting"
+            fill
+            className="object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-card" />
+        </div>
+        <div className="container relative mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
               Frequently Asked <span className="text-primary">Questions</span>

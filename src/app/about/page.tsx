@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Award, Shield, Users, Heart, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
@@ -42,8 +43,18 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-background to-card py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="relative bg-gradient-to-b from-background to-card py-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-hero-landscape-lighting-design.webp"
+            alt="Professional landscape lighting"
+            fill
+            className="object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-card" />
+        </div>
+        <div className="container relative mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
               About <span className="text-primary">Fireflies</span>
@@ -90,8 +101,16 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl bg-muted flex items-center justify-center">
-                <div className="text-center p-8">
+              <div className="aspect-square rounded-2xl overflow-hidden">
+                <Image
+                  src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fireflies-landscape-lighting-video-02.webp"
+                  alt="Landscape lighting showcase"
+                  fill
+                  className="object-cover"
+                />
+                {/* Overlay with stats */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 text-center">
                   <div className="text-6xl font-bold text-primary mb-2">10+</div>
                   <div className="text-xl text-foreground font-medium">
                     Years of Experience

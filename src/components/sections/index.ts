@@ -5,3 +5,4 @@ export { Testimonials } from "./Testimonials";
 export { CTA } from "./CTA";
 export { VisualizerPromo } from "./VisualizerPromo";
 export { ServiceAreas } from "./ServiceAreas";
+export { Gallery } from "./Gallery";

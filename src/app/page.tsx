@@ -3,6 +3,7 @@ import {
   ValueProps,
   Services,
   VisualizerPromo,
+  Gallery,
   ServiceAreas,
   Testimonials,
   CTA,
@@ -94,6 +95,7 @@ export default function HomePage() {
       <ValueProps />
       <Services />
       <VisualizerPromo />
+      <Gallery />
       <ServiceAreas />
       <Testimonials />
       <CTA />

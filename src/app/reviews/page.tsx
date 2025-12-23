@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Star, Quote, ExternalLink, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
@@ -85,8 +86,17 @@ export default function ReviewsPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-background to-card py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="relative bg-gradient-to-b from-background to-card py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/xiicxl3qu3y7mndvff1i.webp"
+            alt="Beautiful landscape lighting"
+            fill
+            className="object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-card" />
+        </div>
+        <div className="container relative mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
               Customer <span className="text-primary">Reviews</span>
@@ -97,7 +107,7 @@ export default function ReviewsPage() {
             </p>
 
             {/* Rating Summary */}
-            <div className="mt-8 inline-flex flex-col items-center rounded-2xl bg-card px-8 py-6">
+            <div className="mt-8 inline-flex flex-col items-center rounded-2xl bg-card/80 backdrop-blur-sm px-8 py-6">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-4xl font-bold text-foreground">
                   {avgRating.toFixed(1)}

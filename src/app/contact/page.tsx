@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin, Clock, Facebook, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { company } from "@/data/company";
@@ -14,8 +15,17 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-background to-card py-20">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="relative bg-gradient-to-b from-background to-card py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/wrsysnt4qrkofgtmo0to.webp"
+            alt="Beautiful landscape lighting"
+            fill
+            className="object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-card" />
+        </div>
+        <div className="container relative mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
               Get In <span className="text-primary">Touch</span>
@@ -205,7 +215,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Service Area Showcase */}
       <section className="py-20 bg-card">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-8">
@@ -216,10 +226,42 @@ export default function ContactPage() {
               Proudly serving Lake Norman and York County communities
             </p>
           </div>
-          <div className="aspect-video max-w-4xl mx-auto rounded-2xl bg-muted flex items-center justify-center">
-            <div className="text-center p-8">
-              <MapPin className="h-16 w-16 text-primary/30 mx-auto mb-4" />
-              <p className="text-muted-foreground">Map coming soon</p>
+          <div className="grid gap-4 md:grid-cols-3 max-w-5xl mx-auto">
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
+              <Image
+                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/enkbdg505g9aweu1gfnu.webp"
+                alt="Landscape lighting in Lake Norman"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <p className="text-sm font-semibold text-foreground">Lake Norman, NC</p>
+              </div>
+            </div>
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
+              <Image
+                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/fmxvxs6ybgnawjitvdco.webp"
+                alt="Landscape lighting in Charlotte"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <p className="text-sm font-semibold text-foreground">Charlotte, NC</p>
+              </div>
+            </div>
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden group">
+              <Image
+                src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/lf6ylbirycdcf7mefn2a.webp"
+                alt="Landscape lighting in York County"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <p className="text-sm font-semibold text-foreground">York County, SC</p>
+              </div>
             </div>
           </div>
         </div>

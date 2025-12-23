@@ -141,6 +141,16 @@ export function VisualizerTool() {
         }),
       });
 
+      // Check for non-JSON response (like error pages)
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          response.status === 413
+            ? "Image too large. Please use a smaller image (under 5MB recommended)."
+            : "Server error. Please try again with a smaller image."
+        );
+      }
+
       const data = await response.json();
 
       if (!response.ok || !data.success) {
