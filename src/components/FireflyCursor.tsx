@@ -23,8 +23,8 @@ export function FireflyCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // Smoother spring for more organic movement
-  const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
+  // Smoother spring for organic movement
+  const springConfig = { damping: 25, stiffness: 250, mass: 0.4 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
@@ -49,17 +49,16 @@ export function FireflyCursor() {
     if (isTouchDevice) return;
 
     const flashInterval = setInterval(() => {
-      // Random chance to flash brightly
       if (Math.random() > 0.7) {
         setIsFlashing(true);
         setTimeout(() => setIsFlashing(false), 150);
       }
-    }, 2000);
+    }, 2500);
 
     // Gentle glow variation
     const glowInterval = setInterval(() => {
-      setGlowIntensity(0.7 + Math.random() * 0.5);
-    }, 100);
+      setGlowIntensity(0.8 + Math.random() * 0.4);
+    }, 150);
 
     return () => {
       clearInterval(flashInterval);
@@ -77,16 +76,16 @@ export function FireflyCursor() {
 
       // Add glowing particle trail
       particleCount.current += 1;
-      if (particleCount.current % 3 === 0) {
+      if (particleCount.current % 4 === 0) {
         setParticles((prev) => {
           const newParticle: Particle = {
             id: Date.now() + Math.random(),
-            x: e.clientX + (Math.random() - 0.5) * 10,
-            y: e.clientY + (Math.random() - 0.5) * 10,
-            size: Math.random() * 4 + 2,
-            duration: Math.random() * 0.5 + 0.5,
+            x: e.clientX + (Math.random() - 0.5) * 8,
+            y: e.clientY + (Math.random() - 0.5) * 8,
+            size: Math.random() * 3 + 2,
+            duration: Math.random() * 0.4 + 0.4,
           };
-          return [...prev.slice(-12), newParticle];
+          return [...prev.slice(-8), newParticle];
         });
       }
     },
@@ -122,7 +121,7 @@ export function FireflyCursor() {
   // Clean up old particles
   useEffect(() => {
     const interval = setInterval(() => {
-      setParticles((prev) => prev.slice(-12));
+      setParticles((prev) => prev.slice(-8));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -159,7 +158,7 @@ export function FireflyCursor() {
             }}
             initial={{
               scale: 1,
-              opacity: 0.8,
+              opacity: 0.7,
               x: "-50%",
               y: "-50%",
             }}
@@ -180,18 +179,15 @@ export function FireflyCursor() {
                 width: particle.size,
                 height: particle.size,
                 borderRadius: "50%",
-                background: "radial-gradient(circle, #FFE87C 0%, #FFD700 40%, transparent 70%)",
-                boxShadow: `
-                  0 0 ${particle.size * 2}px rgba(255, 232, 124, 0.8),
-                  0 0 ${particle.size * 4}px rgba(255, 215, 0, 0.4)
-                `,
+                background: "radial-gradient(circle, #FFE87C 0%, #FFD700 50%, transparent 100%)",
+                boxShadow: `0 0 ${particle.size * 2}px rgba(255, 215, 0, 0.6)`,
               }}
             />
           </motion.div>
         ))}
       </AnimatePresence>
 
-      {/* Main firefly cursor */}
+      {/* Simple Firefly Cursor */}
       <motion.div
         className="pointer-events-none fixed z-[9999]"
         style={{
@@ -202,22 +198,14 @@ export function FireflyCursor() {
         }}
         animate={{
           opacity: isVisible ? 1 : 0,
-          rotate: [0, 5, -5, 3, -3, 0],
-        }}
-        transition={{
-          rotate: {
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          },
         }}
       >
-        {/* Outer atmospheric glow */}
+        {/* Outer glow */}
         <motion.div
           className="absolute left-1/2 top-1/2 rounded-full"
           animate={{
-            scale: isFlashing ? 2 : isHovering ? [1.3, 1.6, 1.3] : [1, 1.2, 1],
-            opacity: isFlashing ? 0.8 : [0.2, 0.4, 0.2],
+            scale: isFlashing ? 1.8 : isHovering ? [1.2, 1.5, 1.2] : [1, 1.2, 1],
+            opacity: isFlashing ? 0.6 : [0.15, 0.3, 0.15],
           }}
           transition={{
             duration: isFlashing ? 0.15 : 1.5,
@@ -225,220 +213,73 @@ export function FireflyCursor() {
             ease: "easeInOut",
           }}
           style={{
-            width: 60,
-            height: 60,
-            marginLeft: -30,
-            marginTop: -30,
-            background: "radial-gradient(circle, rgba(255, 232, 124, 0.3) 0%, rgba(255, 215, 0, 0.1) 40%, transparent 70%)",
-            filter: "blur(8px)",
+            width: 40,
+            height: 40,
+            marginLeft: -20,
+            marginTop: -20,
+            background: "radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%)",
+            filter: "blur(6px)",
           }}
         />
 
-        {/* Secondary glow ring */}
-        <motion.div
-          className="absolute left-1/2 top-1/2 rounded-full"
-          animate={{
-            scale: isHovering ? [1.1, 1.3, 1.1] : [1, 1.15, 1],
-            opacity: isFlashing ? 1 : glowIntensity * 0.5,
-          }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{
-            width: 35,
-            height: 35,
-            marginLeft: -17.5,
-            marginTop: -17.5,
-            background: "radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, rgba(255, 165, 0, 0.2) 50%, transparent 70%)",
-            boxShadow: `0 0 20px rgba(255, 215, 0, ${glowIntensity * 0.4})`,
-          }}
-        />
-
-        {/* Firefly body container */}
+        {/* Simple firefly body */}
         <motion.div
           className="relative"
           animate={{
-            y: [0, -2, 0, 2, 0],
+            y: [0, -1, 0, 1, 0],
           }}
           transition={{
-            duration: 1.5,
+            duration: 2,
             repeat: Infinity,
             ease: "easeInOut",
           }}
         >
-          {/* Wings (left) */}
-          <motion.div
-            className="absolute"
-            style={{
-              width: 8,
-              height: 12,
-              left: -6,
-              top: -2,
-              background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-              borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%",
-              transformOrigin: "right center",
-            }}
-            animate={{
-              rotateY: [0, 30, 0, -10, 0],
-              rotateZ: [-15, -25, -15, -5, -15],
-            }}
-            transition={{
-              duration: 0.15,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Wings (right) */}
-          <motion.div
-            className="absolute"
-            style={{
-              width: 8,
-              height: 12,
-              right: -6,
-              top: -2,
-              background: "linear-gradient(-135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
-              borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%",
-              transformOrigin: "left center",
-            }}
-            animate={{
-              rotateY: [0, -30, 0, 10, 0],
-              rotateZ: [15, 25, 15, 5, 15],
-            }}
-            transition={{
-              duration: 0.15,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-
-          {/* Firefly head */}
+          {/* Dark body/head - small oval */}
           <div
             style={{
-              width: 6,
-              height: 5,
-              background: "linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)",
+              width: 4,
+              height: 6,
+              background: "linear-gradient(180deg, #3a3a3a 0%, #1a1a1a 100%)",
               borderRadius: "50% 50% 40% 40%",
               position: "absolute",
-              top: -8,
+              top: -10,
               left: "50%",
-              marginLeft: -3,
+              marginLeft: -2,
             }}
           />
 
-          {/* Firefly thorax (middle body) */}
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              background: "linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%)",
-              borderRadius: "40%",
-              position: "absolute",
-              top: -4,
-              left: "50%",
-              marginLeft: -4,
-            }}
-          />
-
-          {/* Glowing abdomen (the light!) */}
+          {/* Glowing light - the main firefly glow */}
           <motion.div
             animate={{
-              scale: isFlashing ? 1.4 : isHovering ? [1, 1.15, 1] : [1, 1.1, 1],
+              scale: isFlashing ? 1.3 : isHovering ? [1, 1.1, 1] : [1, 1.05, 1],
               opacity: isFlashing ? 1 : glowIntensity,
             }}
             transition={{
-              duration: isFlashing ? 0.1 : 0.8,
+              duration: isFlashing ? 0.1 : 1,
               repeat: isFlashing ? 0 : Infinity,
               ease: "easeInOut",
             }}
             style={{
-              width: isHovering ? 14 : 12,
-              height: isHovering ? 16 : 14,
+              width: isHovering ? 10 : 8,
+              height: isHovering ? 10 : 8,
               background: isFlashing
-                ? "radial-gradient(circle at 50% 30%, #FFFACD 0%, #FFE87C 30%, #FFD700 60%, #FFA500 100%)"
-                : "radial-gradient(circle at 50% 30%, #FFE87C 0%, #FFD700 40%, #FFA500 80%, #FF8C00 100%)",
-              borderRadius: "45% 45% 50% 50%",
+                ? "radial-gradient(circle at 40% 40%, #FFFACD 0%, #FFE87C 40%, #FFD700 100%)"
+                : "radial-gradient(circle at 40% 40%, #FFE87C 0%, #FFD700 50%, #FFA500 100%)",
+              borderRadius: "50%",
               boxShadow: isFlashing
                 ? `
-                  0 0 15px rgba(255, 250, 205, 1),
-                  0 0 30px rgba(255, 232, 124, 0.9),
-                  0 0 45px rgba(255, 215, 0, 0.7),
-                  0 0 60px rgba(255, 165, 0, 0.5),
-                  inset 0 -3px 6px rgba(255, 140, 0, 0.5)
+                  0 0 8px rgba(255, 250, 205, 1),
+                  0 0 16px rgba(255, 232, 124, 0.9),
+                  0 0 24px rgba(255, 215, 0, 0.7),
+                  0 0 32px rgba(255, 165, 0, 0.4)
                 `
                 : `
-                  0 0 ${10 * glowIntensity}px rgba(255, 232, 124, ${0.9 * glowIntensity}),
-                  0 0 ${20 * glowIntensity}px rgba(255, 215, 0, ${0.6 * glowIntensity}),
-                  0 0 ${30 * glowIntensity}px rgba(255, 165, 0, ${0.4 * glowIntensity}),
-                  inset 0 -2px 4px rgba(255, 140, 0, 0.4)
+                  0 0 ${6 * glowIntensity}px rgba(255, 232, 124, 0.9),
+                  0 0 ${12 * glowIntensity}px rgba(255, 215, 0, 0.6),
+                  0 0 ${18 * glowIntensity}px rgba(255, 165, 0, 0.3)
                 `,
             }}
-          >
-            {/* Light segments on abdomen */}
-            <div
-              style={{
-                position: "absolute",
-                top: "20%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "60%",
-                height: "30%",
-                background: "rgba(255, 255, 240, 0.4)",
-                borderRadius: "50%",
-                filter: "blur(1px)",
-              }}
-            />
-          </motion.div>
-
-          {/* Tiny legs (decorative) */}
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={`leg-l-${i}`}
-              style={{
-                position: "absolute",
-                width: 1,
-                height: 4,
-                background: "#2a2a2a",
-                left: -2,
-                top: i * 3 - 2,
-                transformOrigin: "top right",
-                transform: `rotate(-${30 + i * 15}deg)`,
-              }}
-              animate={{
-                rotate: [-30 - i * 15, -35 - i * 15, -30 - i * 15],
-              }}
-              transition={{
-                duration: 0.2,
-                repeat: Infinity,
-                delay: i * 0.05,
-              }}
-            />
-          ))}
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={`leg-r-${i}`}
-              style={{
-                position: "absolute",
-                width: 1,
-                height: 4,
-                background: "#2a2a2a",
-                right: -2,
-                top: i * 3 - 2,
-                transformOrigin: "top left",
-                transform: `rotate(${30 + i * 15}deg)`,
-              }}
-              animate={{
-                rotate: [30 + i * 15, 35 + i * 15, 30 + i * 15],
-              }}
-              transition={{
-                duration: 0.2,
-                repeat: Infinity,
-                delay: i * 0.05,
-              }}
-            />
-          ))}
+          />
         </motion.div>
       </motion.div>
     </>
