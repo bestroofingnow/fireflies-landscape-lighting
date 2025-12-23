@@ -51,6 +51,102 @@ const lightingStylePrompts: Record<string, string> = {
     The sky should be dark blue (dusk/night). Keep the home structure exactly the same.`,
 };
 
+// Try Gemini 3 Pro Image (Nano Banana Pro) first, then fallback to 2.5 Flash
+async function generateWithNanaBananaPro(
+  genAI: GoogleGenerativeAI,
+  prompt: string,
+  imageData: string,
+  mimeType: string
+): Promise<{ image: string | null; text: string | null }> {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3-pro-image-preview",
+    generationConfig: {
+      // @ts-expect-error - imageConfig is supported but not in types yet
+      imageConfig: {
+        aspectRatio: "4:3",
+        imageSize: "2K",
+      },
+    },
+  });
+
+  const imagePart = {
+    inlineData: {
+      data: imageData,
+      mimeType: mimeType || "image/jpeg",
+    },
+  };
+
+  const result = await model.generateContent([prompt, imagePart]);
+  const response = result.response;
+
+  let generatedImage: string | null = null;
+  let textDescription: string | null = null;
+
+  if (response.candidates && response.candidates[0]) {
+    const parts = response.candidates[0].content?.parts || [];
+
+    for (const part of parts) {
+      if ("inlineData" in part && part.inlineData) {
+        generatedImage = part.inlineData.data;
+      }
+      if ("text" in part && part.text) {
+        textDescription = part.text;
+      }
+    }
+  }
+
+  return { image: generatedImage, text: textDescription };
+}
+
+// Fallback to Gemini 2.5 Flash for text description
+async function generateWithFlashFallback(
+  genAI: GoogleGenerativeAI,
+  prompt: string,
+  imageData: string,
+  mimeType: string
+): Promise<{ image: string | null; text: string | null }> {
+  const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash-preview-05-20",
+  });
+
+  const imagePart = {
+    inlineData: {
+      data: imageData,
+      mimeType: mimeType || "image/jpeg",
+    },
+  };
+
+  const textPrompt = `You are a professional landscape lighting visualization expert.
+
+Analyze this home exterior image and create a detailed description of how the following lighting design would transform it:
+
+${prompt}
+
+Provide a vivid, detailed description of:
+1. Where each light fixture would be placed
+2. How the light would fall on the architecture and landscaping
+3. The overall ambiance and mood created
+4. Specific features that would be highlighted
+
+Make the description so vivid that the homeowner can visualize exactly how their home would look with professional landscape lighting installed.`;
+
+  const result = await model.generateContent([textPrompt, imagePart]);
+  const response = result.response;
+
+  let textDescription: string | null = null;
+
+  if (response.candidates && response.candidates[0]) {
+    const parts = response.candidates[0].content?.parts || [];
+    for (const part of parts) {
+      if ("text" in part && part.text) {
+        textDescription = part.text;
+      }
+    }
+  }
+
+  return { image: null, text: textDescription };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -84,71 +180,49 @@ export async function POST(request: NextRequest) {
     }
 
     const prompt = lightingStylePrompts[style];
-
-    // Initialize the Google Generative AI client
     const genAI = new GoogleGenerativeAI(apiKey);
 
-    // Use Gemini 2.0 Flash with image generation capabilities
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
-      generationConfig: {
-        // @ts-expect-error - responseModalities is supported but not in types yet
-        responseModalities: ["Text", "Image"],
-      },
-    });
+    let result: { image: string | null; text: string | null };
 
-    // Prepare the image data
-    const imagePart = {
-      inlineData: {
-        data: image,
-        mimeType: mimeType || "image/jpeg",
-      },
-    };
+    // Try Nano Banana Pro (Gemini 3 Pro Image) first
+    try {
+      console.log("Attempting Gemini 3 Pro Image (Nano Banana Pro)...");
+      result = await generateWithNanaBananaPro(genAI, prompt, image, mimeType);
 
-    // Generate content with image editing
-    const result = await model.generateContent([
-      prompt,
-      imagePart,
-    ]);
-
-    const response = result.response;
-
-    // Check for generated image in the response
-    let generatedImageBase64: string | null = null;
-    let textDescription: string | null = null;
-
-    if (response.candidates && response.candidates[0]) {
-      const parts = response.candidates[0].content?.parts || [];
-
-      for (const part of parts) {
-        // Check for inline image data
-        if ('inlineData' in part && part.inlineData) {
-          generatedImageBase64 = part.inlineData.data;
-        }
-        // Check for text response
-        if ('text' in part && part.text) {
-          textDescription = part.text;
-        }
+      if (result.image) {
+        console.log("Successfully generated image with Nano Banana Pro");
+        return NextResponse.json({
+          success: true,
+          resultImage: result.image,
+          textDescription: result.text,
+          message: "Your home with professional landscape lighting:",
+          model: "gemini-3-pro-image-preview",
+        });
       }
+    } catch (nanaBananaError) {
+      console.log(
+        "Nano Banana Pro failed, falling back to 2.5 Flash:",
+        nanaBananaError instanceof Error ? nanaBananaError.message : "Unknown error"
+      );
     }
 
-    if (generatedImageBase64) {
-      return NextResponse.json({
-        success: true,
-        resultImage: generatedImageBase64,
-        textDescription: textDescription,
-        message: "Your home with professional landscape lighting:",
-      });
-    }
+    // Fallback to Gemini 2.5 Flash for text description
+    try {
+      console.log("Falling back to Gemini 2.5 Flash...");
+      result = await generateWithFlashFallback(genAI, prompt, image, mimeType);
 
-    // If no image was generated, return the text description as fallback
-    if (textDescription) {
-      return NextResponse.json({
-        success: true,
-        resultImage: null,
-        textDescription: textDescription,
-        message: "Here's how your home would look with professional landscape lighting:",
-      });
+      if (result.text) {
+        return NextResponse.json({
+          success: true,
+          resultImage: null,
+          textDescription: result.text,
+          message:
+            "Here's how your home would look with professional landscape lighting:",
+          model: "gemini-2.5-flash-preview-05-20",
+        });
+      }
+    } catch (flashError) {
+      console.error("Flash fallback also failed:", flashError);
     }
 
     return NextResponse.json(
@@ -158,7 +232,6 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
-
   } catch (error) {
     console.error("Visualizer API error:", error);
 
@@ -166,7 +239,10 @@ export async function POST(request: NextRequest) {
       const errorMessage = error.message.toLowerCase();
       console.error("Full error message:", error.message);
 
-      if (errorMessage.includes("quota") || errorMessage.includes("rate limit")) {
+      if (
+        errorMessage.includes("quota") ||
+        errorMessage.includes("rate limit")
+      ) {
         return NextResponse.json(
           {
             success: false,
@@ -177,12 +253,17 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (errorMessage.includes("api key") || errorMessage.includes("api_key") ||
-          errorMessage.includes("invalid key") || errorMessage.includes("unauthorized")) {
+      if (
+        errorMessage.includes("api key") ||
+        errorMessage.includes("api_key") ||
+        errorMessage.includes("invalid key") ||
+        errorMessage.includes("unauthorized")
+      ) {
         return NextResponse.json(
           {
             success: false,
-            message: "API configuration error. Please ensure a valid Google AI API key is configured.",
+            message:
+              "API configuration error. Please ensure a valid Google AI API key is configured.",
           },
           { status: 500 }
         );
@@ -202,7 +283,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            message: "Image could not be processed. Please try a different photo of your home's exterior.",
+            message:
+              "Image could not be processed. Please try a different photo of your home's exterior.",
           },
           { status: 400 }
         );
