@@ -50,9 +50,9 @@ export function Header() {
           <Image
             src="https://fireflieslandscapelighting.com/wp-content/uploads/2025/04/Fireflies.ai-2.webp"
             alt="Fireflies Landscape Lighting"
-            width={180}
-            height={50}
-            className="h-10 w-auto"
+            width={540}
+            height={150}
+            className="h-[7.5rem] w-auto"
             priority
           />
         </Link>
